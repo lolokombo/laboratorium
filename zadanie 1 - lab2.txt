@@ -1,0 +1,80 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Diagnostics;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace zad
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+
+        }
+
+        private void btnDivide_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                double dividend = double.Parse(txtDividend.Text);
+                double divisor = double.Parse(txtDivisor.Text);
+
+                if (divisor == 0)
+                {
+                    throw new DivideByZeroException("Dzielnik nie może być zerem.");
+                }
+
+                double result = dividend / divisor;
+                txtResult.Text = result.ToString();
+            }
+            catch (FormatException ex)
+            {
+                LogError(ex);
+                MessageBox.Show("Nieprawidłowy format liczby.");
+            }
+            catch (DivideByZeroException ex)
+            {
+                LogError(ex);
+                MessageBox.Show(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                LogError(ex);
+                MessageBox.Show("Wystąpił nieoczekiwany błąd.");
+            }
+        }
+
+        private void LogError(Exception ex)
+        {
+            if (!EventLog.SourceExists("DivisionApp"))
+            {
+                EventLog.CreateEventSource("DivisionApp", "Application");
+            }
+            EventLog eventLog = new EventLog("Application");
+            eventLog.Source = "DivisionApp";
+            eventLog.WriteEntry(ex.Message, EventLogEntryType.Error);
+        }
+
+        private void txtDividend_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Form1_Load_1(object sender, EventArgs e)
+        {
+
+        }
+    }
+}
