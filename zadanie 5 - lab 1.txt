@@ -1,0 +1,64 @@
+using System;
+using System.IO;
+
+namespace ConsoleApp1
+{
+    class Program
+    {
+        static void Main()
+        {
+            string filePath = "plikHH.bin";
+            Menu(filePath);
+        }
+        private static void Menu(string filePath)
+        {
+            Console.WriteLine("1 - Dodaj użytkownika");
+            Console.WriteLine("2 - Wczytaj listę");
+            Console.Write("Co chcesz zrobić?: ");
+
+            char wybor = Console.ReadKey().KeyChar;
+            Console.WriteLine("\n");
+
+            switch (wybor)
+            {
+                case '1':
+                    DodajUzytkownika(filePath);
+                    break;
+                case '2':
+                    WczytajListe(filePath);
+                    break;
+                default:
+                    Console.WriteLine("Nieprawidłowy wybór.");
+                    break;
+            }
+        }
+        private static void DodajUzytkownika(string filePath)
+        {
+            Console.Write("Podaj imię: ");
+            string imie = Console.ReadLine();
+
+            Console.Write("Podaj nazwisko: ");
+            string nazwisko = Console.ReadLine();
+
+            Console.Write("Podaj adres: ");
+            string adres = Console.ReadLine();
+
+            string daneUzytkownika = $"{imie} {nazwisko} {adres}";
+
+            File.WriteAllText(filePath, daneUzytkownika);
+            Console.WriteLine("\nDane zapisane pomyślnie!\n");
+        }
+        private static void WczytajListe(string filePath)
+        {
+            if (File.Exists(filePath))
+            {
+                Console.WriteLine("\nZawartość pliku:");
+                Console.WriteLine(File.ReadAllText(filePath));
+            }
+            else
+            {
+                Console.WriteLine("\nPlik nie istnieje.");
+            }
+        }
+    }
+}

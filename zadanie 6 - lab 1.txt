@@ -1,0 +1,31 @@
+using System;
+using System.IO;
+using System.Linq;
+
+namespace ConsoleApp1
+{
+    class Program
+    {
+        static void Main()
+        {
+            string plikglowny = "plik1.txt";
+            string plikkoncowy = "plik2.txt";
+
+            KopiujPlik(plikglowny, plikkoncowy);
+            Console.WriteLine("Plik został skopiowany.");
+        }
+        static void KopiujPlik(string sourcePath, string destinationPath)
+        {
+            UtworzPlikJesliNieIstnieje(sourcePath);
+            File.Copy(sourcePath, destinationPath, overwrite: true);
+        }
+        static void UtworzPlikJesliNieIstnieje(string path)
+        {
+            if (!File.Exists(path))
+            {
+                File.WriteAllLines(path, new string[100].Select(_ => "In moments of so great importance in contemporary history"));
+
+            }
+        }
+    }
+}

@@ -1,0 +1,35 @@
+using System;
+using System.IO;
+using System.Linq;
+
+namespace ConsoleApp1
+{
+    class Program
+    {
+        static void Main()
+        {
+            string filePath = "plikHH.txt";
+
+            EnsureFileExists(filePath);
+            PrintReversedFileContent(filePath);
+        }
+        private static void EnsureFileExists(string path)
+        {
+            if (!File.Exists(path))
+            {
+                File.WriteAllText(path, "We were given power in circumstances of the greatest conceivable pressure, the pressure of the knowledge that, by itself");
+            }
+        }
+
+        private static void PrintReversedFileContent(string path)
+        {
+            Console.WriteLine($"Odwrócona zawartość pliku {path}:");
+
+            foreach (var line in File.ReadLines(path))
+            {
+                Console.WriteLine(ReverseString(line));
+            }
+        }
+        private static string ReverseString(string input) => new string(input.Reverse().ToArray());
+    }
+}

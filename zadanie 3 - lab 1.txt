@@ -1,0 +1,35 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ConsoleApp1
+{
+    class Program
+    {
+        static void Main()
+        {
+            string path = @"plikHH.txt";
+
+            if (!File.Exists(path))
+            {
+                using (StreamWriter writer = new StreamWriter(path))
+                {
+                    writer.WriteLine("We were given power in circumstances of the greatest conceivable pressure, the pressure of the knowledge that, by itself");
+                    
+                }
+            }
+            using (FileStream fs = new FileStream(path, FileMode.Open))
+            using (StreamReader reader = new StreamReader(fs))
+            {
+                string linia;
+                while ((linia = reader.ReadLine()) != null)
+                {
+                    Console.WriteLine(linia);
+                }
+            }
+        }
+    }
+}

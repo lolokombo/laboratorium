@@ -1,0 +1,53 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Diagnostics;
+
+namespace ConsoleApp1
+{
+    class Program
+    {
+        static void Kopiowanie(string plikglowny, string plikkoncowy)
+        {
+
+            KopiujPlik(plikglowny, plikkoncowy);
+            Console.WriteLine("Plik został skopiowany.");
+        }
+        static void KopiujPlik(string sourcePath, string destinationPath)
+        {
+            UtworzPlikJesliNieIstnieje(sourcePath);
+            File.Copy(sourcePath, destinationPath, overwrite: true);
+        }
+        static void UtworzPlikJesliNieIstnieje(string path)
+        {
+            if (!File.Exists(path))
+            {
+                File.WriteAllLines(path, new string[100].Select(_ => "In moments of so great importance in contemporary history"));
+
+            }
+        }
+
+
+        static void Main()
+        {
+            string plikglowny = @"plikglowny.txt";
+            string plikkoncowy = @"plikkoncowy.txt";
+
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            Kopiowanie(plikglowny, plikkoncowy);
+
+            stopwatch.Stop();
+            TimeSpan ts = stopwatch.Elapsed;
+
+            FileInfo plikInfo = new FileInfo(plikkoncowy);
+            long bity = plikInfo.Length;
+
+            double mb = bity / (1024.0 * 1024.0);
+
+            Console.WriteLine($"Plik waży: {mb:F2} MB");
+            Console.WriteLine($"Kopiowanie trwało {ts.TotalMilliseconds} ms");
+        }
+    }
+}

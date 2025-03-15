@@ -1,0 +1,78 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ConsoleApp1
+{
+    class Samochod
+    {
+
+        public string Marka { get; set; }
+        public string Model { get; set; }
+        public int IloscDrzwi { get; set; }
+        public double PojemnoscSilnika { get; set; }
+        public double SrednieSpalanie { get; set; }
+
+        private static int iloscSamochodow = 0;
+
+        public Samochod() : this("nieznana", "nieznany", 0, 0.0, 0.0) { }
+
+        public Samochod(string marka, string model, int iloscDrzwi, double pojemnoscSilnika, double srednieSpalanie)
+        {
+            Marka = marka;
+            Model = model;
+            IloscDrzwi = iloscDrzwi;
+            PojemnoscSilnika = pojemnoscSilnika;
+            SrednieSpalanie = srednieSpalanie;
+            iloscSamochodow++;
+        }
+        private double ObliczSpalanie(double dlugoscTrasy)
+        {
+            return (SrednieSpalanie * dlugoscTrasy) / 100.0;
+        }
+
+        public double ObliczKosztPrzejazdu(double dlugoscTrasy, double cenaPaliwa)
+        {
+            return ObliczSpalanie(dlugoscTrasy) * cenaPaliwa;
+        }
+
+        public void WypiszInfo()
+        {
+            Console.WriteLine("========================");
+            Console.WriteLine($"Marka: {Marka}");
+            Console.WriteLine($"Model: {Model}");
+            Console.WriteLine($"Ilość drzwi: {IloscDrzwi}");
+            Console.WriteLine($"Pojemność silnika: {PojemnoscSilnika} cm³");
+            Console.WriteLine($"Średnie spalanie: {SrednieSpalanie} l/100km");
+            Console.WriteLine("========================\n");
+        }
+
+        public static void WypiszIloscSamochodow()
+        {
+            Console.WriteLine($"Łączna liczba utworzonych samochodów: {iloscSamochodow}\n");
+        }
+    }
+
+    class Program
+    {
+        static void Main()
+        {
+            Samochod s1 = new Samochod();
+            s1.WypiszInfo();
+            s1.Marka = "Fiat";
+            s1.Model = "126p";
+            s1.IloscDrzwi = 2;
+            s1.PojemnoscSilnika = 650;
+            s1.SrednieSpalanie = 6.0;
+            s1.WypiszInfo();
+            Samochod s2 = new Samochod("Syrena", "105", 2, 800, 7.6);
+            s2.WypiszInfo();
+            double kosztPrzejazdu = s2.ObliczKosztPrzejazdu(30.5, 4.85);
+            Console.WriteLine($"Koszt przejazdu: {kosztPrzejazdu} zł\n");
+            Samochod.WypiszIloscSamochodow();
+            Console.ReadKey();
+        }
+    }
+}

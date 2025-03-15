@@ -1,0 +1,114 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ConsoleApp1
+{
+    public class Samochod
+    {
+        private static int iloscSamochodow = 0;
+
+        public string Marka { get; set; }
+        public string Model { get; set; }
+        public int IloscDrzwi { get; set; }
+        public int PojemnoscSilnika { get; set; }
+        public double SrednieSpalanie { get; set; }
+
+        public Samochod() : this("nieznana", "nieznany", 0, 0, 0.0) { }
+
+        public Samochod(string marka, string model, int iloscDrzwi, int pojemnoscSilnika, double srednieSpalanie)
+        {
+            Marka = marka;
+            Model = model;
+            IloscDrzwi = iloscDrzwi;
+            PojemnoscSilnika = pojemnoscSilnika;
+            SrednieSpalanie = srednieSpalanie;
+            iloscSamochodow++;
+        }
+
+        private double ObliczSpalanie(double dlugoscTrasy) => (dlugoscTrasy * SrednieSpalanie) / 100.0;
+
+        public double ObliczKosztPrzejazdu(double dlugoscTrasy, double cenaPaliwa) => ObliczSpalanie(dlugoscTrasy) * cenaPaliwa;
+
+        public void WypiszInfo()
+        {
+            Console.WriteLine($"Marka: {Marka}\nModel: {Model}\nIlość drzwi: {IloscDrzwi}\nPojemność silnika: {PojemnoscSilnika}\nŚrednie spalanie: {SrednieSpalanie}\n");
+        }
+
+        public static void WypiszIloscSamochodow() => Console.WriteLine($"Ilość samochodów: {iloscSamochodow}");
+    }
+
+    public class Garaz
+    {
+        public string Adres { get; set; }
+        public int Pojemnosc { get; private set; }
+        private int liczbaSamochodow;
+        private Samochod[] samochody;
+
+        public Garaz() : this("nieznany", 0) { }
+
+        public Garaz(string adres, int pojemnosc)
+        {
+            Adres = adres;
+            Pojemnosc = pojemnosc;
+            samochody = new Samochod[pojemnosc];
+        }
+
+        public void WprowadzSamochod(Samochod samochod)
+        {
+            if (liczbaSamochodow < Pojemnosc)
+            {
+                samochody[liczbaSamochodow++] = samochod;
+            }
+            else
+            {
+                Console.WriteLine("Garaż jest już pełny\n");
+            }
+        }
+
+        public void WyprowadzSamochod()
+        {
+            if (liczbaSamochodow > 0)
+            {
+                samochody[--liczbaSamochodow] = null;
+            }
+            else
+            {
+                Console.WriteLine("Garaż jest pusty\n");
+            }
+        }
+
+        public void WypiszInfo()
+        {
+            Console.WriteLine($"Adres: {Adres}\nPojemność: {Pojemnosc}\nLiczba samochodów: {liczbaSamochodow}\n");
+            for (int i = 0; i < liczbaSamochodow; i++)
+            {
+                samochody[i]?.WypiszInfo();
+            }
+        }
+    }
+
+    class Program
+    {
+        static void Main()
+        {
+            var s1 = new Samochod("Fiat", "126p", 2, 650, 6.0);
+            var s2 = new Samochod("Syrena", "105", 2, 800, 7.6);
+            var g1 = new Garaz("ul. Garażowa 1", 1);
+            var g2 = new Garaz("ul. Garazowa 2", 2);
+            g1.WprowadzSamochod(s1);
+            g1.WypiszInfo();
+            g1.WprowadzSamochod(s2);
+            g2.WprowadzSamochod(s2);
+            g2.WprowadzSamochod(s1);
+            g2.WypiszInfo();
+            g2.WyprowadzSamochod();
+            g2.WypiszInfo();
+            g2.WyprowadzSamochod();
+            g2.WyprowadzSamochod();
+            Console.ReadKey();
+        }
+    }
+}

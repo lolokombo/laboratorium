@@ -1,0 +1,155 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
+
+class Program
+{
+    class Zadanie
+    {
+        public int Id { get; set; }
+        public string Nazwa { get; set; }
+        public string Opis { get; set; }
+        public DateTime? DataZakonczenia { get; set; }
+        public bool CzyWykonane { get; set; }
+    }
+
+    class ManagerZadan
+    {
+        private List<Zadanie> zadania = new List<Zadanie>();
+        private readonly string sciezka = "zadania.json";
+
+        public ManagerZadan()
+        {
+            WczytajZadania();
+        }
+
+        public void DodajZadanie()
+        {
+            Zadanie noweZadanie = new Zadanie
+            {
+                Id = zadania.Count > 0 ? zadania[zadania.Count - 1].Id + 1 : 0,
+                Nazwa = PobierzTekst("Nazwa"),
+                Opis = PobierzTekst("Opis")
+            };
+            zadania.Add(noweZadanie);
+            Console.WriteLine("Dodano zadanie.\n");
+        }
+
+        public void UsunZadanie()
+        {
+            EdytujZadanie("usunięte", z => zadania.Remove(z));
+        }
+
+        public void OznaczJakoWykonane()
+        {
+            EdytujZadanie("oznaczone jako wykonane", z =>
+            {
+                z.CzyWykonane = true;
+                z.DataZakonczenia = DateTime.Now;
+            });
+        }
+
+        public void WypiszZadania()
+        {
+            if (zadania.Count == 0)
+            {
+                Console.WriteLine("Brak zadań.\n");
+                return;
+            }
+
+            foreach (var z in zadania)
+            {
+                Console.WriteLine($"ID: {z.Id}, Nazwa: {z.Nazwa}, Opis: {z.Opis}, Wykonane: {z.CzyWykonane}, Data: {(z.DataZakonczenia.HasValue ? z.DataZakonczenia.Value.ToString("g") : "Brak")}\n");
+            }
+        }
+
+        public void PrzykladoweDane()
+        {
+            zadania = new List<Zadanie>
+            {
+                new Zadanie { Id = 0, Nazwa = "Zadanie 1", Opis = "Opis 1" },
+                new Zadanie { Id = 1, Nazwa = "Zadanie 2", Opis = "Opis 2", CzyWykonane = true, DataZakonczenia = DateTime.Now }
+            };
+            Console.WriteLine("Dodano przykładowe zadania.\n");
+        }
+
+        public void ZapiszZadania()
+        {
+            string json = JsonSerializer.Serialize(zadania, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(sciezka, json);
+        }
+
+        private void WczytajZadania()
+        {
+            if (File.Exists(sciezka) && new FileInfo(sciezka).Length > 0)
+            {
+                string json = File.ReadAllText(sciezka);
+                zadania = JsonSerializer.Deserialize<List<Zadanie>>(json);
+            }
+            else
+            {
+                zadania = new List<Zadanie>();
+            }
+        }
+
+        private void EdytujZadanie(string komunikat, Action<Zadanie> akcja)
+        {
+            int id = PobierzLiczbe("Podaj ID zadania");
+            Zadanie zadanie = zadania.Find(z => z.Id == id);
+            if (zadanie != null)
+            {
+                akcja(zadanie);
+                Console.WriteLine($"Zadanie {komunikat}.\n");
+            }
+            else
+            {
+                Console.WriteLine(" Nie znaleziono zadania.\n");
+            }
+        }
+
+        private string PobierzTekst(string prompt)
+        {
+            Console.Write($"{prompt}: ");
+            return Console.ReadLine();
+        }
+
+        private int PobierzLiczbe(string prompt)
+        {
+            Console.Write($"{prompt}: ");
+            return int.Parse(Console.ReadLine());
+        }
+    }
+
+    static void Main()
+    {
+        ManagerZadan manager = new ManagerZadan();
+        bool exit = false;
+
+        while (!exit)
+        {
+            Console.WriteLine("========== MENU ==========");
+            Console.WriteLine("1. Wyświetl zadania");
+            Console.WriteLine("2. Dodaj zadanie");
+            Console.WriteLine("3. Usuń zadanie");
+            Console.WriteLine("4. Oznacz jako wykonane");
+            Console.WriteLine("5. Przykładowe dane");
+            Console.WriteLine("6. Zapisz i wyjdź");
+            Console.WriteLine("==========================");
+
+            string wybor = Console.ReadLine();
+            Console.WriteLine();
+
+            switch (wybor)
+            {
+                case "1": manager.WypiszZadania(); break;
+                case "2": manager.DodajZadanie(); break;
+                case "3": manager.UsunZadanie(); break;
+                case "4": manager.OznaczJakoWykonane(); break;
+                case "5": manager.PrzykladoweDane(); break;
+                case "6": manager.ZapiszZadania(); exit = true; break;
+                default: Console.WriteLine(" Nie ma takiej opcji.\n"); break;
+            }
+        }
+    }
+}
